@@ -11,7 +11,6 @@ import { Button } from '../Button/Button.component';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import {
-  faUser,
   faRightFromBracket,
   faSearch,
   faBars,
