@@ -9,7 +9,7 @@ import { NavLink, Link } from 'react-router-dom';
 import { useUserContext } from '../../userContext';
 import { Button } from '../Button/Button.component';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import logo from '../../assets/images/logo.png';
+
 import {
   faUser,
   faRightFromBracket,
@@ -33,7 +33,7 @@ export const Navigation = () => {
   const [deals, setDeals] = useState([]);
   const [resultsHome, setResultsHome] = useState([]);
   // const [resultsHomeApps, setResultsHomeApps] = useState([]);
-  const [topics, setTopics] = useState([]);
+  const [tags, setTags] = useState([]);
   const [categories, setCategories] = useState([]);
   const inputRef = useRef(null);
 
@@ -67,11 +67,11 @@ export const Navigation = () => {
   useEffect(() => {
     // async function fetchCategories() {
     //   const responseCategories = await fetch(`${apiURL()}/categories/`);
-    //   const responseTopics = await fetch(`${apiURL()}/topics/`);
+    //   const responseTags = await fetch(`${apiURL()}/tags/`);
     //   const categoriesResponse = await responseCategories.json();
-    //   const topicsResponse = await responseTopics.json();
-    //   setTopics(topicsResponse);
-    //   const combinedArray = categoriesResponse.concat(topicsResponse);
+    //   const tagsResponse = await responseTags.json();
+    //   setTags(tagsResponse);
+    //   const combinedArray = categoriesResponse.concat(tagsResponse);
     //   if (searchTerms) {
     //     const filteredSearch = combinedArray?.filter((item) =>
     //       item.title.toLowerCase().includes(searchTerms.toLowerCase()),
@@ -82,10 +82,10 @@ export const Navigation = () => {
     //   }
     // }
 
-    async function fetchTopics() {
-      const response = await fetch(`${apiURL()}/topics/`);
+    async function fetchTags() {
+      const response = await fetch(`${apiURL()}/tags/`);
       const data = await response.json();
-      setTopics(data);
+      setTags(data);
     }
 
     async function fetchCategories() {
@@ -108,7 +108,7 @@ export const Navigation = () => {
 
     fetchDeals();
     fetchApps();
-    fetchTopics();
+    fetchTags();
     fetchCategories();
   }, []);
 
@@ -135,13 +135,13 @@ export const Navigation = () => {
     return apps;
   };
 
-  const filterTopicsBySearch = (search) => {
+  const filterTagsBySearch = (search) => {
     if (search) {
-      return topics.filter((item) =>
+      return tags.filter((item) =>
         item.title.toLowerCase().includes(searchTerms.toLowerCase()),
       );
     }
-    return topics;
+    return tags;
   };
 
   const filterCategoriesBySearch = (search) => {
@@ -155,7 +155,7 @@ export const Navigation = () => {
 
   const resultsHomeDeals = filterDealsBySearch(searchTerms);
   const resultsHomeApps = filterAppsBySearch(searchTerms);
-  const resultsHomeTopics = filterTopicsBySearch(searchTerms);
+  const resultsHomeTags = filterTagsBySearch(searchTerms);
   const resultsHomeCategories = filterCategoriesBySearch(searchTerms);
 
   const handleSearch = (event) => {
@@ -182,17 +182,17 @@ export const Navigation = () => {
   const dropDownResultsApps = resultsHomeApps?.map((result) => (
     <Link
       to={`/deals/app/${result.id}`}
-      /* state={{ frontPageItem: relatedTopics }} */
+      /* state={{ frontPageItem: relatedTags }} */
       onClick={() => toggleSearchModal()}
     >
       <li key={result.id}>{result.title}</li>
     </Link>
   ));
 
-  const dropDownResultsTopics = resultsHomeTopics?.map((result) => (
+  const dropDownResultsTags = resultsHomeTags?.map((result) => (
     <Link
       to={`/deals/topic/${result.id}`}
-      /* state={{ frontPageItem: relatedTopics }} */
+      /* state={{ frontPageItem: relatedTags }} */
       onClick={() => toggleSearchModal()}
     >
       <li key={result.id}>{result.title}</li>
@@ -202,7 +202,7 @@ export const Navigation = () => {
   const dropDownResultsCategories = resultsHomeCategories?.map((result) => (
     <Link
       to={`/deals/category/${result.id}`}
-      /* state={{ frontPageItem: relatedTopics }} */
+      /* state={{ frontPageItem: relatedTags }} */
       onClick={() => toggleSearchModal()}
     >
       <li key={result.id}>{result.title}</li>
@@ -212,7 +212,7 @@ export const Navigation = () => {
   const dropDownResultsDeals = resultsHomeDeals?.map((result) => (
     <Link
       to={`/deals/${result.id}`}
-      /* state={{ frontPageItem: relatedTopics }} */
+      /* state={{ frontPageItem: relatedTags }} */
       onClick={() => toggleSearchModal()}
     >
       <li key={result.id}>{`${result.appTitle}: ${result.title}`}</li>
@@ -256,6 +256,15 @@ export const Navigation = () => {
                       className="nav-link"
                     >
                       Apps
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/blog"
+                      onClick={toggleHamburger}
+                      className="nav-link"
+                    >
+                      Blog
                     </NavLink>
                   </li>
                   <li>
@@ -402,7 +411,8 @@ export const Navigation = () => {
           <ul>
             <li>
               <NavLink to="/" className="nav-link logo-link">
-                <img src={logo} alt="logo" className="img-logo" />
+                <House size={32} />
+                {/* <img src={logo} alt="logo" className="img-logo" /> */}
               </NavLink>
             </li>
             <li className="navigation-search">
@@ -418,20 +428,22 @@ export const Navigation = () => {
                 </label>
               </form>
             </li>
-            <li className="hide-on-tablet">
-              <NavLink to="/categories" className="nav-link">
-                Categories
-              </NavLink>
-            </li>
-            <li className="hide-on-tablet">
-              <NavLink to="/all-apps" className="nav-link">
-                Apps
-              </NavLink>
-            </li>
-            <li className="hide-on-tablet">
-              <NavLink to="/community" className="nav-link">
-                Community
-              </NavLink>
+            <li className="menu-dropdown">
+              Menu
+              <div className="dropdown-content dropdown-menu">
+                <NavLink to="/categories" className="nav-link">
+                  Categories
+                </NavLink>
+                <NavLink to="/all-apps" className="nav-link">
+                  Apps
+                </NavLink>
+                <NavLink to="/blog" className="nav-link">
+                  Blog
+                </NavLink>
+                <NavLink to="/community" className="nav-link">
+                  Community
+                </NavLink>
+              </div>
             </li>
           </ul>
         </div>
@@ -457,7 +469,7 @@ export const Navigation = () => {
             {user ? (
               <div className="container-logged-in">
                 <ProfileImage name={name || user?.displayName || user?.email} />
-                <div className="dropdown-content">
+                <div className="dropdown-content dropdown-profile">
                   <NavLink to="/bookmarks" className="login">
                     Bookmarks
                   </NavLink>
@@ -545,10 +557,10 @@ export const Navigation = () => {
                 <li>No apps found :(</li>
               )}
             </ul>
-            {dropDownResultsTopics.length > 0 && (
+            {dropDownResultsTags.length > 0 && (
               <>
-                <h3>Topics</h3>
-                <ul>{dropDownResultsTopics}</ul>
+                <h3>Tags</h3>
+                <ul>{dropDownResultsTags}</ul>
               </>
             )}
 
