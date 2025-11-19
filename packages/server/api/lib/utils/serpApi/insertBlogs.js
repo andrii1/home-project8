@@ -106,7 +106,7 @@ async function insertDeal(title, appleId, appId) {
   return data; // assume it returns { id, full_name }
 }
 
-const insertDeals = async (appsParam) => {
+const insertBlogs = async (appsParam) => {
   // console.log(appsParam);
   for (const appItem of appsParam) {
     const appleId = appItem.id;
@@ -153,4 +153,4 @@ const insertDeals = async (appsParam) => {
   }
 };
 
-module.exports = insertDeals;
+module.exports = insertBlogs;

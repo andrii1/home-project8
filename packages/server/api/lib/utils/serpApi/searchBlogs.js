@@ -3,7 +3,7 @@
 require('dotenv').config();
 const store = require('app-store-scraper');
 
-async function searchApps(queries) {
+async function searchBlogs(queries) {
   const allApps = [];
 
   for (const query of queries) {
@@ -24,4 +24,4 @@ async function searchApps(queries) {
   return allApps;
 }
 
-module.exports = searchApps;
+module.exports = searchBlogs;
