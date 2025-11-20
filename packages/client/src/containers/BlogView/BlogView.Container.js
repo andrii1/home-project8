@@ -112,32 +112,34 @@ export const BlogView = () => {
     fetchBlogs();
   }, []);
 
-  useEffect(() => {
-    async function fetchRelatedDeals() {
-      setLoading(true);
-      try {
-        const url = `${apiURL()}/deals?page=0&column=id&direction=desc&search=${encodeURIComponent(
-          cleanBrand(blog.title),
-        )}`;
+  // useEffect(() => {
+  //   async function fetchRelatedDeals() {
+  //     setLoading(true);
+  //     try {
+  //       const url = `${apiURL()}/deals?page=0&column=id&direction=desc&search=${encodeURIComponent(
+  //         cleanBrand(blog.title),
+  //       )}`;
 
-        const response = await fetch(url);
-        const data = await response.json();
+  //       const response = await fetch(url);
+  //       const data = await response.json();
 
-        if (!response.ok) {
-          throw new Error(data.message || 'Failed to fetch');
-        }
-        setRelatedDeals(data.data);
-        setError(null);
-      } catch (e) {
-        setError({ message: e.message || 'Failed to fetch data.' });
-      }
-      setLoading(false);
-    }
+  //       if (!response.ok) {
+  //         throw new Error(data.message || 'Failed to fetch');
+  //       }
+  //       setRelatedDeals(data.data);
+  //       setError(null);
+  //     } catch (e) {
+  //       setError({ message: e.message || 'Failed to fetch data.' });
+  //     }
+  //     setLoading(false);
+  //   }
 
-    fetchRelatedDeals();
-  }, [blog.title]);
+  //   fetchRelatedDeals();
+  // }, [blog.title]);
 
   const readTime = getEstimatedReadTime(blog?.content);
+
+  console.log('blog', blog);
 
   const cardItems = recentBlogs?.map((item) => (
     <Link to={`../blog/${item.slug}`} className="card-blog">
@@ -147,11 +149,11 @@ export const BlogView = () => {
     </Link>
   ));
 
-  const cardItemsDeals = relatedDeals?.map((item) => (
-    <Link to={`../deals/${item.id}`} className="card-blog card-deal">
-      <h3>{item.title}</h3>
-    </Link>
-  ));
+  // const cardItemsDeals = relatedDeals?.map((item) => (
+  //   <Link to={`../deals/${item.id}`} className="card-blog card-deal">
+  //     <h3>{item.title}</h3>
+  //   </Link>
+  // ));
 
   if (loading) {
     return <LoadingContainer />;
@@ -177,14 +179,14 @@ export const BlogView = () => {
         <main>
           <article>
             <p className="read-time">{readTime} min read</p>
-            {relatedDeals.length > 0 && (
+            {/* {relatedDeals.length > 0 && (
               <div className="container-alternatives">
                 <h3>👉 Related deals & codes</h3>
                 <div className="container-cards small-cards">
                   {cardItemsDeals}
                 </div>
               </div>
-            )}
+            )} */}
             {/* {hasImagesContainer ? (
               <Markdown
                 options={{

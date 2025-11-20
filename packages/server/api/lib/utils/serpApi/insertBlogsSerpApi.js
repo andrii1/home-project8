@@ -9,8 +9,6 @@
 require('dotenv').config();
 
 const fetchSerpApi = require('./serpApi');
-const searchBlogs = require('./searchBlogs');
-const insertBlogs = require('./insertBlogs');
 const OpenAI = require('openai');
 
 const openai = new OpenAI({
@@ -32,6 +30,8 @@ if (!allowedDays.includes(todayDay)) {
 // Credentials (from .env)
 const USER_UID = process.env.USER_UID_BLOG_LOCAL;
 const API_PATH = process.env.API_PATH_BLOG_LOCAL;
+const API_PATH_MINIAPPSHUB = process.env.API_PATH_MINIAPPSHUB_PROD;
+const { USER_UID_MAH_PROD } = process.env;
 
 // const queries = [
 //   { title: 'emochi ai promo code' },
@@ -45,10 +45,10 @@ function capitalizeFirstWord(str) {
 }
 
 async function insertQuery(queryObj) {
-  const res = await fetch(`${API_PATH}/queries`, {
+  const res = await fetch(`${API_PATH_MINIAPPSHUB}/queriesMrhack`, {
     method: 'POST',
     headers: {
-      token: `token ${USER_UID}`,
+      token: `token ${USER_UID_MAH_PROD}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(queryObj),
