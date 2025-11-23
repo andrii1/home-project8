@@ -52,6 +52,10 @@
 .card-deal {
   background-color: #ffe5d9;
 }
+.container-single-blog .submit-box {
+  width: 100%;
+  max-width: none;
+}
 
 @media only screen and (min-width: 769px) and (max-width: 992px) {
   .container-single-blog {
@@ -70,5 +74,8 @@
   }
   .container-single-blog {
     width: 90%;
+  }
+  .container-single-blog .container-cards {
+    width: 100%;
   }
 }
