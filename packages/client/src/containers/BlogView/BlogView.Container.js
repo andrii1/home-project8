@@ -7,15 +7,15 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import './BlogView.Style.css';
 import { Button } from '../../components/Button/Button.component';
+import { Comments } from '../../components/Comments/Comments.component';
 import { Badge } from '../../components/Badge/Badge.component';
 import { Card } from '../../components/Card/Card.component';
+import { FavoritesBar } from '../../components/FavoritesBar/FavoritesBar.component';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Modal from '../../components/Modal/Modal.Component';
-import iconCopy from '../../assets/images/icons8-copy-24.png';
+
 // eslint-disable-next-line import/no-extraneous-dependencies
 import Markdown from 'markdown-to-jsx';
 import logo from '../../assets/images/logo.png';
-import { useComments } from '../../utils/hooks/useComments';
 
 import { getDateFromTimestamp } from '../../utils/getDateFromTimestamp';
 import { getEstimatedReadTime } from '../../utils/getEstimatedReadTime';
@@ -68,18 +68,6 @@ export const BlogView = () => {
   const [similarBlogs, setSimilarBlogs] = useState([]);
   const [recentBlogs, setRecentBlogs] = useState([]);
   const [relatedDeals, setRelatedDeals] = useState([]);
-  const {
-    comments,
-    comment,
-    commentError,
-    invalidForm,
-    validForm,
-    openConfirmationModal,
-    setOpenConfirmationModal,
-    commentHandler,
-    handleSubmit,
-    formatDate,
-  } = useComments(blog.id, user);
 
   useEffect(() => {
     async function fetchSingleBlog(blogSlug) {
@@ -168,8 +156,6 @@ export const BlogView = () => {
   //   </Link>
   // ));
 
-  console.log('comments', comments);
-
   if (loading) {
     return <LoadingContainer />;
   }
@@ -188,12 +174,14 @@ export const BlogView = () => {
         />
       </Helmet>
       <div className="container-single-blog">
-        <header>
-          <h1>{blog.title}</h1>
-        </header>
         <main>
           <article>
-            <p className="read-time">{readTime} min read</p>
+            <header>
+              <h1>{blog.title}</h1>
+              <p className="read-time">{readTime} min read</p>
+              <FavoritesBar itemId={blog.id} />
+            </header>
+
             {/* {relatedDeals.length > 0 && (
               <div className="container-alternatives">
                 <h3>👉 Related deals & codes</h3>
@@ -330,79 +318,14 @@ export const BlogView = () => {
               </div>
             </footer>
           </article>
-
-          <div className="container-comments">
-            {comments.length === 0 && (
-              <div>
-                <i>No comments for this blog. </i>
-                {user && <i>Add first one below.</i>}
-              </div>
-            )}
-            {comments.length > 0 &&
-              comments.map((item) => (
-                <div className="form-container">
-                  <div className="comment-box submit-box">
-                    <div>{item.content}</div>
-                    <div className="comment-author-date">{`by ${
-                      item.full_name
-                    } on ${formatDate(item.created_at)}`}</div>
-                  </div>
-                </div>
-              ))}
-            {!user && (
-              <div>
-                <i>
-                  <br />
-                  <Link to="/signup" className="simple-link">
-                    Sign up
-                  </Link>{' '}
-                  or{' '}
-                  <Link to="/login" className="simple-link">
-                    log in
-                  </Link>{' '}
-                  to add comments
-                </i>
-              </div>
-            )}
-            {user && (
-              <div className="form-container">
-                <div className="comment-box submit-box">
-                  <form onSubmit={handleSubmit}>
-                    <textarea
-                      className="form-input"
-                      value={comment}
-                      placeholder="Your comment"
-                      onChange={commentHandler}
-                    />
-
-                    <Button
-                      primary
-                      className="btn-add-prompt"
-                      type="submit"
-                      label="Add comment"
-                    />
-                    {validForm && (
-                      <Modal
-                        title="Your comment has been submitted!"
-                        open={openConfirmationModal}
-                        toggle={() => setOpenConfirmationModal(false)}
-                      />
-                    )}
-                    {invalidForm && (
-                      <p className="error-message">{commentError}</p>
-                    )}
-                  </form>
-                </div>
-              </div>
-            )}
-          </div>
-          {recentBlogs.length > 0 && (
-            <div className="container-alternatives">
-              <h3>⏳ Recent blogs</h3>
-              <div className="container-cards small-cards">{cardItems}</div>
-            </div>
-          )}
         </main>
+        <Comments id={blog.id} user={user} fieldName="blog" />
+        {recentBlogs.length > 0 && (
+          <aside className="container-alternatives">
+            <h3>⏳ Recent blogs</h3>
+            <div className="container-cards small-cards">{cardItems}</div>
+          </aside>
+        )}
       </div>
     </>
   );

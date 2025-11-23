@@ -20,10 +20,10 @@ const getRatingsByUserId = async (token) => {
   }
 
   try {
-    const ratings = await knex('apps')
-      .select('apps.*', 'ratings.id as ratingsID')
+    const ratings = await knex('blogs')
+      .select('blogs.*', 'ratings.id as ratingsID')
       .leftJoin('ratings', function () {
-        this.on('apps.id', '=', 'ratings.app_id');
+        this.on('blogs.id', '=', 'ratings.blog_id');
       })
       .where('ratings.user_id', '=', `${user.id}`);
 
@@ -38,7 +38,7 @@ const getRatingsByUserId = async (token) => {
 };
 
 // get by user-id and prompt-id
-const getRatingsByAppId = async (token, appsId) => {
+const getRatingsByBlogId = async (token, blogId) => {
   const userUid = token.split(' ')[1];
   const user = (await knex('users').where({ uid: userUid }))[0];
 
@@ -47,17 +47,17 @@ const getRatingsByAppId = async (token, appsId) => {
   }
 
   try {
-    const ratings = await knex('apps')
-      .select('apps.*', 'ratings.id as ratingsID')
+    const ratings = await knex('blogs')
+      .select('blogs.*', 'ratings.id as ratingsID')
       .leftJoin('ratings', function () {
-        this.on('apps.id', '=', 'ratings.app_id');
+        this.on('blogs.id', '=', 'ratings.blog_id');
       })
       .where('ratings.user_id', '=', `${user.id}`)
-      .where('ratings.app_id', '=', `${appsId}`);
+      .where('ratings.blog_id', '=', `${blogId}`);
 
     if (ratings.length === 0) {
       throw new HttpError(
-        `There are no ratings available with this user for this app`,
+        `There are no ratings available with this user for this blog`,
         404,
       );
     }
@@ -78,7 +78,7 @@ const createratings = async (token, body) => {
     }
     await knex('ratings').insert({
       user_id: user.id,
-      app_id: body.app_id,
+      blog_id: body.blog_id,
     });
     return {
       successful: true,
@@ -98,7 +98,7 @@ const deleteratings = async (token, ratingsId) => {
   }
   try {
     const deletedFav = await knex('ratings')
-      .where({ app_id: ratingsId, user_id: user.id })
+      .where({ blog_id: ratingsId, user_id: user.id })
       .del();
     if (deletedFav === 0) {
       throw new HttpError('The ratings ID you provided does not exist.', 400);
@@ -114,7 +114,7 @@ const deleteratings = async (token, ratingsId) => {
 
 module.exports = {
   getRatingsByUserId,
-  getRatingsByAppId,
+  getRatingsByBlogId,
   createratings,
   deleteratings,
   getAllRatings,

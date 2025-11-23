@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { apiURL } from '../../apiURL';
 
-export const useFavorites = (user) => {
+export const useFavorites = (user, fieldName) => {
   const [favorites, setFavorites] = useState([]);
 
   const fetchFavorites = useCallback(async () => {
@@ -24,17 +24,16 @@ export const useFavorites = (user) => {
     fetchFavorites();
   }, [fetchFavorites]);
 
-  const addFavorite = async (quoteId) => {
+  const addFavorite = async (id) => {
     const response = await fetch(`${apiURL()}/favorites`, {
       method: 'POST',
       headers: {
         token: `token ${user?.uid}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        quote_id: quoteId,
-      }),
+      body: JSON.stringify({ [fieldName]: id }),
     });
+
     if (response.ok) {
       fetchFavorites();
     }

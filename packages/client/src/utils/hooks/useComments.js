@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { apiURL } from '../../apiURL';
 
-export const useComments = (blogId, user) => {
+export const useComments = (id, user, fieldName) => {
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState('');
   const [commentError, setCommentError] = useState('');
@@ -10,14 +10,14 @@ export const useComments = (blogId, user) => {
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
 
   const fetchComments = useCallback(async () => {
-    const response = await fetch(`${apiURL()}/comments?blogId=${blogId}`);
+    const response = await fetch(`${apiURL()}/comments?${fieldName}Id=${id}`);
     const data = await response.json();
     setComments(Array.isArray(data) ? data : []);
-  }, [blogId]);
+  }, [id, fieldName]);
 
   useEffect(() => {
-    if (blogId) fetchComments();
-  }, [fetchComments, blogId]);
+    if (id) fetchComments();
+  }, [fetchComments, id]);
 
   const addComment = async (content) => {
     const response = await fetch(`${apiURL()}/comments`, {
@@ -28,7 +28,7 @@ export const useComments = (blogId, user) => {
       },
       body: JSON.stringify({
         content,
-        blog_id: blogId,
+        [`${fieldName}_id`]: id,
       }),
     });
 
