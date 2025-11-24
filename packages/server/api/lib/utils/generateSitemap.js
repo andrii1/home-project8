@@ -70,7 +70,7 @@ const uploadToS3 = async (key, body) => {
     // Collect URLs
     let urls = [];
 
-    const staticRoutes = ['/', '/apps', '/faq', '/login', '/signup'];
+    const staticRoutes = ['/', '/login', '/signup'];
     urls.push(...staticRoutes.map((r) => ({ url: r })));
 
     urls.push(

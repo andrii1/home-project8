@@ -127,12 +127,48 @@ const createBlog = async (token, body) => {
       model: 'gpt-4o-mini',
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.7,
-      max_tokens: 100,
+      max_tokens: 600,
     });
 
     const summary = completion.choices[0].message.content.trim();
 
-    await knex('blogs').insert({
+    const promptTags = `Create 3-4 tags for this blog with title: "${body.title}" and content "${body.content}". Tag should be without hashtag, ideally one word, which describes the blog, but can be from more words if needed in context. Return tags separated by comma.`;
+
+    const completionTags = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: promptTags }],
+      temperature: 0.7,
+      max_tokens: 600,
+    });
+
+    const tagsString = completionTags.choices[0].message.content.trim();
+
+    const tagsArray = tagsString.split(',').map((tag) => tag.trim());
+
+    if (body.tag) {
+      tagsArray.push(body.tag);
+    }
+
+    const tagIds = await Promise.all(
+      tagsArray.map(async (tag) => {
+        const existingTag = await knex('tags')
+          .whereRaw('LOWER(title) = ?', [tag.toLowerCase()])
+          .first();
+
+        if (existingTag) {
+          return existingTag.id;
+        }
+        const baseSlugTag = generateSlug(tag);
+        const uniqueSlugTag = await ensureUniqueSlug(baseSlugTag);
+        const [tagId] = await knex('tags').insert({
+          title: tag,
+          slug: uniqueSlugTag,
+        }); // just use the ID
+        return tagId;
+      }),
+    );
+
+    const [blogId] = await knex('blogs').insert({
       title: body.title,
       content: body.content,
       slug: uniqueSlug,
@@ -145,8 +181,19 @@ const createBlog = async (token, body) => {
       user_id: body.user_id,
     });
 
+    const insertedBlogToTags = await Promise.all(
+      tagIds.map((tagId) =>
+        knex('tagsBlogs').insert({
+          blog_id: blogId,
+          tag_id: tagId,
+        }),
+      ),
+    );
+
     return {
       successful: true,
+      blogId,
+      insertedBlogToTags,
     };
   } catch (error) {
     return error.message;
