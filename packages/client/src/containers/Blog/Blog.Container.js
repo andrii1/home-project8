@@ -104,7 +104,7 @@ export const Blog = () => {
   return (
     <>
       <Helmet>
-        <title>Blog - Top App Deals</title>
+        <title>Blog - The Buzr</title>
         <meta name="description" content="Top App Deals blog" />
       </Helmet>
       {/* <div className="hero"></div> */}

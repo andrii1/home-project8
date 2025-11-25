@@ -166,10 +166,7 @@ export const BlogView = () => {
     <>
       <Helmet>
         <title>{blog.title}</title>
-        <meta
-          name="description"
-          content={blog.summary || 'Top App Deals blog'}
-        />
+        <meta name="description" content={blog.summary || 'The Buzr blog'} />
       </Helmet>
       <div className="container-single-blog">
         <main>
