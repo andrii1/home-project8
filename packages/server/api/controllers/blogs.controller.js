@@ -80,11 +80,12 @@ const getBlogById = async (slug) => {
     const blog = await knex('blogs')
       .select(
         'blogs.*',
-
         'users.full_name as userFullName',
+        'categories.title as categoryTitle',
       )
+      .join('categories', 'blogs.category_id', '=', 'categories.id')
       .join('users', 'blogs.user_id', '=', 'users.id')
-      .where({ slug });
+      .where('blogs.slug', slug);
     if (blog.length === 0) {
       throw new Error(`incorrect entry with the id of ${slug}`, 404);
     }
@@ -132,41 +133,41 @@ const createBlog = async (token, body) => {
 
     const summary = completion.choices[0].message.content.trim();
 
-    const promptTags = `Create 3-4 tags for this blog with title: "${body.title}" and content "${body.content}". Tag should be without hashtag, ideally one word, which describes the blog, but can be from more words if needed in context. Return tags separated by comma.`;
+    // const promptTags = `Create 3-4 tags for this blog with title: "${body.title}" and content "${body.content}". Tag should be without hashtag, ideally one word, which describes the blog, but can be from more words if needed in context. Return tags separated by comma.`;
 
-    const completionTags = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [{ role: 'user', content: promptTags }],
-      temperature: 0.7,
-      max_tokens: 600,
-    });
+    // const completionTags = await openai.chat.completions.create({
+    //   model: 'gpt-4o-mini',
+    //   messages: [{ role: 'user', content: promptTags }],
+    //   temperature: 0.7,
+    //   max_tokens: 600,
+    // });
 
-    const tagsString = completionTags.choices[0].message.content.trim();
+    // const tagsString = completionTags.choices[0].message.content.trim();
 
-    const tagsArray = tagsString.split(',').map((tag) => tag.trim());
+    // const tagsArray = tagsString.split(',').map((tag) => tag.trim());
 
-    if (body.tag) {
-      tagsArray.push(body.tag);
-    }
+    // if (body.tag) {
+    //   tagsArray.push(body.tag);
+    // }
 
-    const tagIds = await Promise.all(
-      tagsArray.map(async (tag) => {
-        const existingTag = await knex('tags')
-          .whereRaw('LOWER(title) = ?', [tag.toLowerCase()])
-          .first();
+    // const tagIds = await Promise.all(
+    //   tagsArray.map(async (tag) => {
+    //     const existingTag = await knex('tags')
+    //       .whereRaw('LOWER(title) = ?', [tag.toLowerCase()])
+    //       .first();
 
-        if (existingTag) {
-          return existingTag.id;
-        }
-        const baseSlugTag = generateSlug(tag);
-        const uniqueSlugTag = await ensureUniqueSlug(baseSlugTag);
-        const [tagId] = await knex('tags').insert({
-          title: tag,
-          slug: uniqueSlugTag,
-        }); // just use the ID
-        return tagId;
-      }),
-    );
+    //     if (existingTag) {
+    //       return existingTag.id;
+    //     }
+    //     const baseSlugTag = generateSlug(tag);
+    //     const uniqueSlugTag = await ensureUniqueSlug(baseSlugTag);
+    //     const [tagId] = await knex('tags').insert({
+    //       title: tag,
+    //       slug: uniqueSlugTag,
+    //     }); // just use the ID
+    //     return tagId;
+    //   }),
+    // );
 
     const [blogId] = await knex('blogs').insert({
       title: body.title,
@@ -181,19 +182,18 @@ const createBlog = async (token, body) => {
       user_id: body.user_id,
     });
 
-    const insertedBlogToTags = await Promise.all(
-      tagIds.map((tagId) =>
-        knex('tagsBlogs').insert({
-          blog_id: blogId,
-          tag_id: tagId,
-        }),
-      ),
-    );
+    // const insertedBlogToTags = await Promise.all(
+    //   tagIds.map((tagId) =>
+    //     knex('tagsBlogs').insert({
+    //       blog_id: blogId,
+    //       tag_id: tagId,
+    //     }),
+    //   ),
+    // );
 
     return {
       successful: true,
       blogId,
-      insertedBlogToTags,
     };
   } catch (error) {
     return error.message;

@@ -29,11 +29,8 @@ async function slugExists(slug) {
 
 const getCategories = async () => {
   try {
-    const categories = await knex('categories')
-      .select('categories.*')
-      .distinct('categories.id')
-      .join('blogs', 'blogs.category_id', '=', 'categories.id')
-      .orderBy('categories.title');
+    const categories = await knex('categories').select('categories.*');
+
     return categories;
   } catch (error) {
     return error.message;
