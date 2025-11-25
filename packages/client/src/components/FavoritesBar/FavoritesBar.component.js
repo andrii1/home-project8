@@ -29,8 +29,6 @@ export const FavoritesBar = ({ itemId, className }) => {
     'blog_id',
   );
 
-  console.log('favorites', favorites);
-
   const toggleModal = () => {
     setOpenModal(false);
     document.body.style.overflow = 'visible';

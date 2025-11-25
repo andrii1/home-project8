@@ -140,8 +140,6 @@ export const BlogView = () => {
 
   const readTime = getEstimatedReadTime(blog?.content);
 
-  console.log('blog', blog);
-
   const cardItems = recentBlogs?.map((item) => (
     <Link to={`../blog/${item.slug}`} className="card-blog">
       <h2>{item.title}</h2>
