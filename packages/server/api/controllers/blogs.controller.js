@@ -78,12 +78,7 @@ const getBlogById = async (slug) => {
 
   try {
     const blog = await knex('blogs')
-      .select(
-        'blogs.*',
-        'users.full_name as userFullName',
-        'categories.title as categoryTitle',
-      )
-      .join('categories', 'blogs.category_id', '=', 'categories.id')
+      .select('blogs.*', 'users.full_name as userFullName')
       .join('users', 'blogs.user_id', '=', 'users.id')
       .where('blogs.slug', slug);
     if (blog.length === 0) {
